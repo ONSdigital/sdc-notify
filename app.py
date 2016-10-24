@@ -63,7 +63,7 @@ def show_email():
 
 
 @app.route('/email', methods=['POST'])
-def show_email():
+def send_email():
     token = request.headers.get("token")
     if validate_token(token) != "":
         data = request.get_json()
