@@ -51,21 +51,26 @@ class Email(db.Model):
 
 @app.route('/email', methods=['GET'])
 def show_email():
+    token = request.headers.get("token")
+    if validate_token(token):
 
-    result = {"email": []}
+        result = {"email": []}
 
-    # Load all associations for this user
-    messages = Email.query.order_by(desc(Email.date))
-    for message in messages:
-        result["email"].append(message)
+        # Load all associations for this user
+        messages = Email.query.order_by(desc(Email.date))
+        for message in messages:
+            result["email"].append(message)
 
-    return jsonify(result)
+        return jsonify(result)
+
+    return unauthorized("Please provide a valid 'token' header.")
 
 
 @app.route('/email', methods=['POST'])
 def send_email():
     token = request.headers.get("token")
-    if validate_token(token) != "":
+    if validate_token(token):
+
         data = request.get_json()
 
         if "to" in data and "subject" in data and "body" in data:
@@ -123,6 +128,7 @@ def validate_token(token):
             return decode(token)
         except JWTError:
             return ""
+    return ""
 
 
 def create_database():
