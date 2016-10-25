@@ -58,13 +58,15 @@ def public_pem():
             # Deserialise the key from the configured value
             pem = os.environ["CLIENT_PUBLIC_KEY"]
             key = serialization.load_pem_public_key(
-                pem,
+                pem.encode("ascii"),
                 backend=default_backend()
             )
+            print(" ************* Using configured public key")
         else:
             # Load the saved key
             filename = "key/key.pub"
             key = read_public(filename)
+            print(" ############### Using test public key")
 
         public_key = to_pem_string(key)
 
@@ -72,6 +74,10 @@ def public_pem():
 
 
 def main():
+
+    #with open("key/key.pub", "rb") as key_file:
+    #    print(key_file.read().decode("ascii").replace("\n", ""))
+
     data = {"key": "value"}
     print(json.dumps(data))
 
