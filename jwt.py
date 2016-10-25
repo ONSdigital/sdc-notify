@@ -61,12 +61,12 @@ def public_pem():
                 pem.encode("ascii"),
                 backend=default_backend()
             )
-            print(" ************* Using configured public key")
+            print("Using configured public key")
         else:
             # Load the saved key
             filename = "key/key.pub"
             key = read_public(filename)
-            print(" ############### Using test public key")
+            print("Loaded test public key")
 
         public_key = to_pem_string(key)
 
