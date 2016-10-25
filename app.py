@@ -59,7 +59,7 @@ def show_email():
         # Load all associations for this user
         messages = Email.query.order_by(desc(Email.date))
         for message in messages:
-            result["email"].append(message)
+            result["email"].append(message.json())
 
         return jsonify(result)
 
@@ -69,9 +69,8 @@ def show_email():
 @app.route('/email', methods=['POST'])
 def send_email():
     token = request.headers.get("token")
-    if validate_token(token):
-
-        data = request.get_json()
+    data = request.get_json()
+    if validate_token(token) and data:
 
         if "to" in data and "subject" in data and "body" in data:
             # Todo: validate email!
@@ -82,7 +81,7 @@ def send_email():
         else:
             return known_error("Please provide 'to', 'subject' and 'body' in your message.")
 
-    return unauthorized("Please provide a valid 'token' header.")
+    return unauthorized("Please provide a valid 'token' header and ensure you're passing application/json.")
 
 
 @app.errorhandler(401)
