@@ -68,20 +68,22 @@ def show_email():
 
 @app.route('/email', methods=['POST'])
 def send_email():
-    token = request.headers.get("token")
+    token = request.headers.get('token')
+    if not validate_token(token):
+        return unauthorized("Please provide a valid 'token' header.")
+
     data = request.get_json()
-    if validate_token(token) and data:
+    if not data:
+        return known_error("Please ensure you're passing application/json.")
 
-        if "to" in data and "subject" in data and "body" in data:
-            # Todo: validate email!
-            email = Email(data["to"], data["subject"], data["body"])
-            db.session.add(email)
-            db.session.commit()
-            return jsonify(email.json())
-        else:
-            return known_error("Please provide 'to', 'subject' and 'body' in your message.")
+    if 'to' in data and 'subject' in data and 'body' in data:
+        # Todo: validate email!
+        email = Email(data['to'], data['subject'], data['body'])
+        db.session.add(email)
+        db.session.commit()
+        return jsonify(email.json())
 
-    return unauthorized("Please provide a valid 'token' header and ensure you're passing application/json.")
+    return known_error("Please provide 'to', 'subject' and 'body' in your message.")
 
 
 @app.errorhandler(401)
