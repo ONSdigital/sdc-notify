@@ -7,6 +7,8 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime
 from sqlalchemy import Column, Integer, String, Text, DateTime, desc
 
+# service name (initially used for sqlite file name and schema name)
+SERVICE_NAME = 'bsdc-notify'
 
 app = Flask(__name__)
 
@@ -14,7 +16,8 @@ app = Flask(__name__)
 CORS(app)
 
 # Set up the database, using configuration if available:
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:////tmp/sdc-notify.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:////tmp/{}.db'.format(SERVICE_NAME))
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
@@ -22,7 +25,7 @@ db = SQLAlchemy(app)
 # NB: for delegation we could add start/end dates to associations,
 #     which might enable us to fulfil a bunch of user needs (e.g. maternity leave).
 class Email(db.Model):
-
+    __table_args__ = {'schema': SERVICE_NAME}
     # Columns
     id = Column(Integer, primary_key=True)
     to = Column(String(100))
