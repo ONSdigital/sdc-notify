@@ -14,11 +14,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Set up the database, using configuration if available:
-if "DATABASE_URL" in os.environ:
-    database_url = os.environ["DATABASE_URL"]
-else:
-    database_url = "sqlite:////tmp/sdc-notifications.db"
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:////tmp/sdc-notify.db')
 db = SQLAlchemy(app)
 
 
