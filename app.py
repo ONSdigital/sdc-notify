@@ -5,7 +5,7 @@ from jwt import encode, decode
 from jose.exceptions import JWTError
 from flask_sqlalchemy import SQLAlchemy
 import datetime
-from sqlalchemy import Column, Integer, String, Text, DateTime, desc
+from sqlalchemy import Column, DateTime, DDL, Integer, String, Text, desc, event
 
 # service name (initially used for sqlite file name and schema name)
 SERVICE_NAME = 'bsdc-notify'
@@ -134,7 +134,8 @@ def validate_token(token):
 
 
 def create_database():
-
+    if SCHEMA_NAME:
+        event.listen(db.Model.metadata, 'before_create', DDL('CREATE SCHEMA IF NOT EXISTS "{}"'.format(SCHEMA_NAME)))
     print("Creating tables...")
     db.create_all()
     print("Done")
