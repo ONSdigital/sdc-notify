@@ -133,19 +133,20 @@ def validate_token(token):
     return ""
 
 
-def create_database():
+def recreate_database():
     if SCHEMA_NAME:
-        event.listen(db.Model.metadata, 'before_create', DDL('CREATE SCHEMA IF NOT EXISTS "{}"'.format(SCHEMA_NAME)))
-    print("Creating tables...")
+        sql = ('DROP SCHEMA IF EXISTS "{0}" CASCADE;'
+               'CREATE SCHEMA IF NOT EXISTS "{0}"'.format(SCHEMA_NAME))
+        event.listen(db.Model.metadata, 'before_create', DDL(sql))
+    else:
+        db.drop_all()
     db.create_all()
-    print("Done")
 
 
 if __name__ == '__main__':
-
-    # Create database
-    print("creating database")
-    create_database()
+    # create and populate db only if in main process (Werkzeug also spawns a child process)
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+        recreate_database()
 
     # Start server
     port = int(os.environ.get('PORT', 5001))
