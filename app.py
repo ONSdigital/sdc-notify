@@ -8,7 +8,7 @@ import datetime
 from sqlalchemy import Column, DateTime, Integer, String, Text, desc
 
 # service name (initially used for sqlite file name and schema name)
-SERVICE_NAME = 'bsdc-notify'
+SERVICE_NAME = 'sdc-notify'
 ENVIRONMENT_NAME = os.getenv('ENVIRONMENT_NAME', 'dev')
 
 app = Flask(__name__)
